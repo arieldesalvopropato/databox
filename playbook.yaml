@@ -27,7 +27,16 @@
         - nginx
         - nginx/certs
         - dashy
+        - samba
       
+      - name: Create a directory for share with Samba (Docker).
+        file:
+          path: /{{ volumespath }}/docker/samba/public
+          owner: root
+          group: root
+          state: directory
+          mode: 777
+
       - name: Creating file for local DNS in Pi-Hole.
         template:
           src: templates/pihole-custom.list
@@ -57,21 +66,22 @@
     become_user: root
     tasks:
       - name: Update all packages to the latest version.
-        {{ packagemanager }}:
+        apt:
          upgrade: dist
 
       - name: Install of mkcert.
-        {{ packagemanager }}:
+        apt:
           name: mkcert
           state: present
       
       - name: Install of Docker.
-        {{ packagemanager }}:
+        apt:
           name: docker.io
           state: present
+        when: ansible_facts['distribution']=="Ubuntu"
   
       - name: Install of Docker-Compose.
-        {{ packagemanager }}:
+        apt:
           name: docker-compose
           state: present
   
@@ -87,10 +97,17 @@
         ansible.builtin.command: mkcert -install
 
       - name: Creating the certificates.
-        ansible.builtin.command: /{{ volumespath }}/docker/nginx/mkcert -key-file key.pem -cert-file cert.pem duplicati.{{ domain }} heimdall.{{ domain }} jellyfin.{{ domain }} kasm.{{ domain }} mysql.{{ domain }} nextcloud.{{ domain }} omv.{{ domain }} portainer.{{ domain }} pihole.{{ domain }}
+        ansible.builtin.command: mkcert -key-file key.pem -cert-file cert.pem duplicati.{{ domain }} heimdall.{{ domain }} jellyfin.{{ domain }} kasm.{{ domain }} mysql.{{ domain }} nextcloud.{{ domain }} omv.{{ domain }} portainer.{{ domain }} pihole.{{ domain }}
       
       - name: Moving the certificates to nginx cert folder.
         ansible.builtin.command: mv key.pem cert.pem /{{ volumespath }}/docker/nginx/certs/
+      
+      - name: Get CAroot dir.
+        shell: mkcert -CAROOT
+        register: CAroot
+
+      - name: Coping the rootCA certificate to the share folder.
+        ansible.builtin.command: cp /root/.local/share/mkcert/rootCA.pem /{{ volumespath }}/docker/samba/public/rootCA.pem
 
   # Play4 - Docker-Compose related tasks.
   - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
@@ -101,4 +118,8 @@
     become_user: root
     tasks:
       - name: Running Docker-Compose.
-        ansible.builtin.command: docker-compose up -d /{{ volumespath }}/docker-compose.yml
+        shell: chdir=/{{ volumespath }} docker-compose up -d
+        register: output
+
+      - debug:
+          msg: "{{ output.stderr_lines }}"

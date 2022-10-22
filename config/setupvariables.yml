@@ -6,13 +6,11 @@
 domain: hostname #Enter the hostname of your server here.
 hostip: X.X.X.X #Enter here the Ip of your Host here.
 volumespath: home #Specify here the path where the Docker volumes will be hosted.
-packagemanager: apt #Indicate which package manager your server uses to perform the installation, e.g. yum.
 default_tz: America/Argentina #Your Time Zone.
 
 #Config vars for Docker Compose yml script.
 
 #MySQL vars
-mysql_root_host: '%' #Allow all ip's to access the Sever (can be specified).
 mysql_root_password : changeMe! #Password to access to the MySQL server as root.
 #These parameters are required for NextCloud installation, it is recommended to change them.
 mysql_database: nextclouddb
@@ -20,10 +18,10 @@ mysql_user: nextcloud
 mysql_password: nextcloud
 
 #No-ip
-#noip_username: 
-#noip_password:
-#noip_domains:
-#noip_interval:
+noip_username: 
+noip_password:
+noip_domains:
+noip_interval:
 
 #Wireguard
 wireguard_tz: America/Argentina # Incase you like use other Time Zone.

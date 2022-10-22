@@ -62,7 +62,7 @@ services:
     restart: unless-stopped
     image: mysql
     environment:
-      MYSQL_ROOT_HOST: {{ mysql_root_host }}
+      MYSQL_ROOT_HOST: '%' #Allow all ip's to access the Sever (can be specified).
       MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
       MYSQL_DATABASE: {{ mysql_database }}
       MYSQL_USER: {{ mysql_user }}
@@ -97,7 +97,7 @@ services:
     image: pihole/pihole:latest
     # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
     ports:
-      - "{{ hostip }}:53/tcp"
+      - "{{ hostip }}:53:53/tcp"
       - "{{ hostip }}:53:53/udp"
       #- "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
       - "81:80/tcp"
@@ -105,8 +105,8 @@ services:
       TZ: {{ default_tz }}
       WEBPASSWORD: {{ pihole_webpassword }}
     volumes:
-      - '/{{ volumespath }}/docker/pihole/etc-pihole:/etc/pihole'
-      - '/{{ volumespath }}/docker/pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
+      - /{{ volumespath }}/docker/pihole/etc-pihole:/etc/pihole
+      - /{{ volumespath }}/docker/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
     #https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     #cap_add:
       #- NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
@@ -215,7 +215,6 @@ services:
     networks: 
       - {{ domain }}-network
 
-
 ############################################################ NO-IP [OPTIONAL]
 #  no-ip:
 #    image: uping/no-ip
@@ -237,14 +236,77 @@ services:
     image: nginx:latest
     container_name: nginx
     ports:
-      - "88:80"
-      - "443:443"
+      - 80:80
+      - 443:443
     restart: unless-stopped
     volumes:
       - /{{ volumespath }}/docker/nginx/nginx-default.conf.template:/etc/nginx/templates/default.conf.template
       - /{{ volumespath }}/docker/nginx/certs:/etc/nginx/certs
     networks: 
       - {{ domain }}-network
+
+############################################################ SAMBA
+  samba:
+    image: dperson/samba
+    container_name: samba
+    restart: always
+    stdin_open: true
+    tty: true
+    environment:
+      TZ: '${TZ}'
+
+      # advertise shares, default: true, or false (open ports 137, 138)
+      NMBD: "true"
+
+      # add a single user. If you need more, use command instead of environment
+      # required arg: "<username>;<passwd>"
+      # <username> for user
+      # <password> for user
+      # [ID] for user, default: ""
+      # [group] for user, default: ""
+      USER: "admin;admin"
+
+      # set the UID for the samba share, default: ""
+      USERID: "0"
+
+      # set the GID for the samba share, default: ""
+      GROUPID: "0"
+
+      # add a single share. If you need more, use command instead of environment
+      # required arg: "<name>;</path>"
+      # <share_name>;
+      # <path_to_share>;
+      # [browsable] default:'yes' or 'no';
+      # [read_only] default:'yes' or 'no';
+      # [guest]: default: 'yes' or 'no';
+      # [users]: default: 'all' or list of allowed users;
+      # [admins] default: 'none' or list of admin users;
+      # [writelist] default: 'none' or list of users that can write to read-only share;
+      # [comment] default: 'none' or description of share
+      SHARE: "public;/mnt;yes;no;no;admin;'none';'none';'Homeserver"
+
+      # workgroup/domain name for share default: "MYGROUP"
+      WORKGROUP: "Homeserver"
+
+      # if set, disables recycle bin for shares
+      RECYCLE: ""
+
+      # if set, disables SMB2 minimum version
+      # SMB: ""
+
+    networks: 
+      - {{ domain }}-network
+    ports:
+      - "137:137/udp" # required to advertise shares (NMBD)
+      - "138:138/udp" # required to advertise shares (NMBD)
+      - "139:139/tcp" # default smb port
+      - "445:445/tcp" # default smb port
+    read_only: false
+    tmpfs:
+      - /tmp
+    volumes:
+      - /{{ volumespath }}/docker/samba/public:/mnt:z # :z allows share to be used by multiple containers
+
 
 ############################################################ CUSTOM NETWORK
 networks:
