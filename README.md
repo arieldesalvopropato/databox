@@ -1,4 +1,5 @@
-## Databox
+<img src="https://github.com/arieldesalvopropato/databox/blob/main/Databox-logos_black.png" width="200" height="200">
+
 
 Scripts to implement a home server using Docker.
 
@@ -26,7 +27,7 @@ The requirements of this script for use are not determined on a single particula
 * Kasm
 * Wireguard
 
-# Optional
+### Optional
 * NO-IP
 
 ## Usage
@@ -37,9 +38,10 @@ If you choose to use OpenMediaVault as your base system, please consider the fol
 * Install OpenMediaVault Extras to have more functionality on your server, including Docker, Portainer or Yacht
 
 To deploy the server perform the following steps:
+* Install Git
 * git clone (repo)
 * cd databox
-* Modifique el archivo "setupvariables.yml" con sus propias preferencias.
+* Change the "setupvariables.yml" file with your own preferences.
 * ansible-playbook playbook.yaml
 
 ## Authors
