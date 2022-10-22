@@ -1,0 +1,11 @@
+{{ hostip }} omv.{{ domain }}
+{{ hostip }} portainer.{{ domain }}
+{{ hostip }} duplicati.{{ domain }}
+{{ hostip }} dashy.{{ domain }}
+{{ hostip }} jellyfin.{{ domain }}
+{{ hostip }} kasm.{{ domain }}
+{{ hostip }} mysql.{{ domain }}
+{{ hostip }} nextcloud.{{ domain }}
+{{ hostip }} pihole.{{ domain }}
+{{ hostip }} transmission.{{ domain }}
+{{ hostip }} uptimekuma.{{ domain }}

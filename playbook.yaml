@@ -1,0 +1,104 @@
+#.SYNOPSIS Ansible playbook. Autor: Ariel De Salvo Propato.
+#.DESCRIPTION Script created with the goal of deploying a home server, with different services running in containers.
+#.NOTES Many of the configurations are dynamic, first check the setupvariables.yml file inside the config folder.
+#.COMPONENT Ansible. 
+
+---
+   # Play1 - Docker preparation tasks.
+  - name: Play Dir/Config - Create Docker directories and configuration files.
+    hosts: localhost
+    vars_files:
+      - config/setupvariables.yml
+    become: yes
+    become_user: root
+    tasks:
+    #Some of the directories will be created automatically with the docker-compose,
+    #these directories are created only because it had config files.
+      - name: Create a directory for docker volumes.
+        file:
+          path: /{{ volumespath }}/docker/{{ item }}
+          owner: root
+          group: root
+          state: directory
+          mode: 0755
+        with_items:
+        - pihole
+        - pihole/etc-pihole
+        - nginx
+        - nginx/certs
+        - dashy
+      
+      - name: Creating file for local DNS in Pi-Hole.
+        template:
+          src: templates/pihole-custom.list
+          dest: /{{ volumespath }}/docker/pihole/etc-pihole/custom.list
+
+      - name: Creating file for Nginx configuration.
+        template:
+          src: templates/nginx-default.conf.template
+          dest: /{{ volumespath }}/docker/nginx/nginx-default.conf.template
+
+      - name: Creating file for Dashy configuration.
+        template:
+          src: templates/dashy-config.yml
+          dest: /{{ volumespath }}/docker/dashy/config.yml
+
+      - name: Creating the Docker-Compose file.
+        template:
+          src: templates/docker-compose.yml
+          dest: /{{ volumespath }}/docker-compose.yml
+  
+  # Play2 - Server preparation tasks.
+  - name: Play Update/Install - Update the system and Install of the required packages.
+    hosts: localhost
+    vars_files:
+      - config/setupvariables.yml
+    become: yes
+    become_user: root
+    tasks:
+      - name: Update all packages to the latest version.
+        {{ packagemanager }}:
+         upgrade: dist
+
+      - name: Install of mkcert.
+        {{ packagemanager }}:
+          name: mkcert
+          state: present
+      
+      - name: Install of Docker.
+        {{ packagemanager }}:
+          name: docker.io
+          state: present
+  
+      - name: Install of Docker-Compose.
+        {{ packagemanager }}:
+          name: docker-compose
+          state: present
+  
+  # Play3 - Certificates related tasks.
+  - name: Play MkCert - rootCA installation and creation of certificates for services.
+    hosts: localhost
+    vars_files:
+      - config/setupvariables.yml
+    become: yes
+    become_user: root
+    tasks:
+      - name: Install the rootCA.
+        ansible.builtin.command: mkcert -install
+
+      - name: Creating the certificates.
+        ansible.builtin.command: /{{ volumespath }}/docker/nginx/mkcert -key-file key.pem -cert-file cert.pem duplicati.{{ domain }} heimdall.{{ domain }} jellyfin.{{ domain }} kasm.{{ domain }} mysql.{{ domain }} nextcloud.{{ domain }} omv.{{ domain }} portainer.{{ domain }} pihole.{{ domain }}
+      
+      - name: Moving the certificates to nginx cert folder.
+        ansible.builtin.command: mv key.pem cert.pem /{{ volumespath }}/docker/nginx/certs/
+
+  # Play4 - Docker-Compose related tasks.
+  - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
+    hosts: localhost
+    vars_files:
+      - config/setupvariables.yml
+    become: yes
+    become_user: root
+    tasks:
+      - name: Running Docker-Compose.
+        ansible.builtin.command: docker-compose up -d /{{ volumespath }}/docker-compose.yml

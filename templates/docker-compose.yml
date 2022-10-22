@@ -1,0 +1,252 @@
+#.SYNOPSIS docker-compose script. Autor: Ariel De Salvo Propato.
+#.DESCRIPTION Script created with the goal of deploying a home server, with different services running in containers.
+#.NOTES Many of the configurations are dynamic, first check the setupvariables.yml file inside the config folder.
+#.COMPONENT Docker-Compose - Docker. 
+
+---
+version: "3.7"
+services:
+############################################################ PORTAINER [OPTIONAL]
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /{{ volumespath }}/docker/portainer/portainer-data:/data
+    ports:
+      - 9000:9000
+      - 9443:9443
+    networks: 
+      - {{ domain }}-network
+
+############################################################ KASM [OPTIONAL]
+  kasm:
+    image: lscr.io/linuxserver/kasm:latest
+    container_name: kasm
+    privileged: true
+    environment:
+      - KASM_PORT=443
+      - TZ= {{ default_tz }}
+    volumes:
+      - /{{ volumespath }}/docker/kasm:/opt
+      - /{{ volumespath }}/docker/kasm:/profiles #Optional
+    ports:
+      - 3000:3000
+      - 1443:443
+    restart: unless-stopped
+    networks: 
+      - {{ domain }}-network
+
+############################################################ NEXTCLOUD
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    volumes:
+      - /{{ volumespath }}/docker/nextcloud/appdata:/config
+      - /{{ volumespath }}/docker/nextcloud/data:/data
+    ports:
+      - 2443:443
+    restart: unless-stopped
+    networks: 
+      - {{ domain }}-network
+    depends_on:
+      - mysql
+
+############################################################ MYSQL
+  mysql:
+    container_name: mysql
+    restart: unless-stopped
+    image: mysql
+    environment:
+      MYSQL_ROOT_HOST: {{ mysql_root_host }}
+      MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
+      MYSQL_DATABASE: {{ mysql_database }}
+      MYSQL_USER: {{ mysql_user }}
+      MYSQL_PASSWORD: {{ mysql_password }}
+    volumes:
+      - /{{ volumespath }}/docker/mysql:/var/lib/mysql
+    ports:
+      - 4306:3306 #It's reccommended not use the default port
+    networks: 
+      - {{ domain }}-network
+
+############################################################ JELLYFIN
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    volumes:
+      - /{{ volumespath }}/docker/jellyfin/library:/config
+      - /{{ volumespath }}/docker/jellyfin/tvseries:/data/tvshows
+      - /{{ volumespath }}/docker/jellyfin/movies:/data/movies
+    ports:
+      - 8096:8096
+      #- 8920:8920 #Optional
+      #- 7359:7359/udp #Optional
+      #- 1900:1900/udp #Optional
+    restart: unless-stopped
+    networks: 
+      - {{ domain }}-network
+
+############################################################ PI-HOLE
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - "{{ hostip }}:53/tcp"
+      - "{{ hostip }}:53:53/udp"
+      #- "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
+      - "81:80/tcp"
+    environment:
+      TZ: {{ default_tz }}
+      WEBPASSWORD: {{ pihole_webpassword }}
+    volumes:
+      - '/{{ volumespath }}/docker/pihole/etc-pihole:/etc/pihole'
+      - '/{{ volumespath }}/docker/pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
+    #https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    #cap_add:
+      #- NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+    restart: unless-stopped
+    networks: 
+      - {{ domain }}-network
+
+############################################################ TRANSMISSION
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    volumes:
+      - /{{ volumespath }}/docker/transmission/config:/config
+      - /{{ volumespath }}/docker/jellyfin/movies:/downloads
+      - /{{ volumespath }}/docker/transmission/watch/folder:/watch
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped
+    networks: 
+      - {{ domain }}-network
+
+############################################################ UPTIME-KUMA
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    container_name: uptimekuma
+    volumes:
+      - /{{ volumespath }}/docker/uptimekuma/uptime-kuma-data:/app/data
+    ports:
+      - 3001:3001
+    restart: always
+    networks: 
+      - {{ domain }}-network
+
+############################################################ WIREGUARD [OPTIONAL]
+  wireguard:
+    image: linuxserver/wireguard
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - TZ={{ default_tz }}
+      - SERVERPORT={{ wireguard_serverport }}
+      - PEERS={{ wireguard_peers }}
+      - PEERDNS={{ wireguard_peerdns }}
+      - ALLOWEDIPS={{ wireguard_allowedips }}
+      - INTERNAL_SUBNET={{ wireguard_internal_subnet }}
+      - SERVERURL={{ wireguard_serverurl }}
+    volumes:
+      - /{{ volumespath }}/docker/wireguard/config:/config
+      - /usr/src:/usr/src # Location of kernel headers
+      - /lib/modules:/lib/modules
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: always
+    networks: 
+      - {{ domain }}-network
+
+############################################################ DASHY
+  dashy:
+    image: lissy93/dashy
+    container_name: dashy
+    volumes:
+      - /{{ volumespath }}/docker/dashy/config.yml:/app/public/conf.yml
+      - /{{ volumespath }}/docker/dashy/item-icons:/app/public/item-icons
+    ports:
+      - 4000:80
+    restart: unless-stopped
+    networks: 
+      - {{ domain }}-network
+
+############################################################ WATCHTOWER
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    networks: 
+      - {{ domain }}-network
+
+############################################################ DUPLICATI
+  duplicati:
+    image: linuxserver/duplicati
+    container_name: duplicati
+    environment:
+      - TZ= {{ default_tz }}
+    volumes:
+      - /{{ volumespath }}/docker/duplicati/config:/config
+      - /{{ volumespath }}/docker/duplicati/BKP:/backups
+      - /{{ volumespath }}/docker:/source
+    ports:
+      - 8200:8200
+    restart: unless-stopped
+    networks: 
+      - {{ domain }}-network
+
+
+############################################################ NO-IP [OPTIONAL]
+#  no-ip:
+#    image: uping/no-ip
+#    container_name: no-ip
+#    restart: unless-stopped
+#    environment:
+#      - USERNAME= {{ noip_username }}
+#      - PASSWORD= {{ noip_password }}
+#      - DOMAINS= {{ noip_domains }}
+#      - INTERVAL= {{ noip_interval }}
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - /{{ volumespath }}/docker/no-ip/config:/config
+#    networks: 
+#      - {{ domain }}-network
+
+############################################################ NGINX
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "88:80"
+      - "443:443"
+    restart: unless-stopped
+    volumes:
+      - /{{ volumespath }}/docker/nginx/nginx-default.conf.template:/etc/nginx/templates/default.conf.template
+      - /{{ volumespath }}/docker/nginx/certs:/etc/nginx/certs
+    networks: 
+      - {{ domain }}-network
+
+############################################################ CUSTOM NETWORK
+networks:
+  {{ domain }}-network:
+    driver: bridge
