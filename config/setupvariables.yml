@@ -34,3 +34,7 @@ wireguard_serverurl: #Wireguard VPN server address (Public IP or Dynamic DNS).
 
 #Pi-Hole
 pihole_webpassword: changeMe! #Set a secure password here or it will be random.
+
+#Samba
+samba_username: changeMe!
+samba_password: changeMe!

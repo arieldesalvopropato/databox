@@ -248,6 +248,7 @@ services:
 ############################################################ SAMBA
   samba:
     image: dperson/samba
+    container_name: samba
     environment:
       TZ: {{ default_tz }}
     ports:
@@ -264,7 +265,7 @@ services:
     volumes:
       - /{{ volumespath }}/docker/samba/public:/public:z
       - /{{ volumespath }}/docker:/docker:z
-    command: '-s "docker;/docker;yes;no;no;admin" -s "public;/public;yes" -u "admin;admin" -p'
+    command: '-s "docker;/docker;yes;no;no;{{ samba_username }}" -s "public;/public;yes" -u "{{ samba_username }};{{ samba_password }}" -p'
     networks:
       - {{ domain }}-network
 
