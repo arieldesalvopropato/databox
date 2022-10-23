@@ -61,11 +61,6 @@
           src: templates/flexget-config.yml
           dest: /{{ volumespath }}/docker/flexget/config.yml
 
-      - name: Creating file for Flexget-Trakt configuration.
-        template:
-          src: templates/flexget-config-trakt.yml
-          dest: /{{ volumespath }}/docker/flexget/config-trakt.yml
-
       - name: Creating the Docker-Compose file.
         template:
           src: templates/docker-compose.yml

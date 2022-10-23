@@ -9,3 +9,5 @@
 {{ hostip }} pihole.{{ domain }}
 {{ hostip }} transmission.{{ domain }}
 {{ hostip }} uptimekuma.{{ domain }}
+{{ hostip }} flexget.{{ domain }}
+{{ hostip }} filebrowser.{{ domain }}

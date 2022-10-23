@@ -12,9 +12,6 @@ schedules:
 
 templates:
   tv:
-    regexp:
-      reject:
-        - x265: {from: title}
     series:
       settings:
         tv:
@@ -22,11 +19,10 @@ templates:
           propers: 12 hours
           quality: 720p
       tv:
-      - Rick and Morty
-
+      - Moonshine
 
     transmission:
-      host: transmission
+      host: http://{{ hostip }}
       port: 9091
       username: {{ transmission_username }}
       password: {{ transmission_password }}
@@ -36,20 +32,3 @@ tasks:
     rss: https://eztv.ag/ezrss.xml
     template: tv
     priority: 2
-  remove_stale_torrents:
-    from_transmission:
-      host: transmission
-      port: 9091
-      username: {{ transmission_username }}
-      password: {{ transmission_password }}
-    disable: [seen, seen_info_hash]
-    if:
-      - transmission_progress == 100: accept
-      - not transmission_seed_ratio_ok: reject
-      - not transmission_idle_limit_ok: reject
-    transmission:
-      host: transmission
-      port: 9091
-      username: {{ transmission_username }}
-      password: {{ transmission_password }}
-      action: purge
