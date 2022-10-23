@@ -21,6 +21,7 @@ The requirements of this script for use are not determined on a single particula
 * Pi-Hole
 * Portainer
 * Transmission
+* FlexGet
 * Uptime-Kuma
 * Watchtower
 * Kasm

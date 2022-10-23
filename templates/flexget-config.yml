@@ -1,0 +1,55 @@
+#Author: https://github.com/pablokbs/plex-rpi/tree/master/flexget
+
+web_server:
+  bind: 0.0.0.0
+  port: 5050
+  web_ui: yes
+
+schedules:
+  - tasks: '*'
+    interval:
+      minutes: 30
+
+templates:
+  tv:
+    regexp:
+      reject:
+        - x265: {from: title}
+    series:
+      settings:
+        tv:
+          exact: yes
+          propers: 12 hours
+          quality: 720p
+      tv:
+      - Rick and Morty
+
+
+    transmission:
+      host: transmission
+      port: 9091
+      username: {{ transmission_username }}
+      password: {{ transmission_password }}
+
+tasks:
+  eztvrss:
+    rss: https://eztv.ag/ezrss.xml
+    template: tv
+    priority: 2
+  remove_stale_torrents:
+    from_transmission:
+      host: transmission
+      port: 9091
+      username: {{ transmission_username }}
+      password: {{ transmission_password }}
+    disable: [seen, seen_info_hash]
+    if:
+      - transmission_progress == 100: accept
+      - not transmission_seed_ratio_ok: reject
+      - not transmission_idle_limit_ok: reject
+    transmission:
+      host: transmission
+      port: 9091
+      username: {{ transmission_username }}
+      password: {{ transmission_password }}
+      action: purge
