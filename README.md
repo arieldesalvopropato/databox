@@ -26,9 +26,10 @@ The requirements of this script for use are not determined on a single particula
 * Kasm
 * Wireguard
 * Samba
+* FileBrowser
 
 ### Optional
-* NO-IP
+* No-IP
 
 ## Usage
 Install a base operating system. For the development of the Scripts and Playbooks I used OpenMediaVault (https://www.openmediavault.org/). In case of using an operating system with a package manager other than apt, define it in the playbook yaml file.

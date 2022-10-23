@@ -269,6 +269,21 @@ services:
     networks:
       - {{ domain }}-network
 
+############################################################ FILEBROWSER
+  filebrowser:
+    image: hurlenko/filebrowser
+    container_name: filebrowser
+    ports:
+      - 8080:8080
+    volumes:
+      - /{{ volumespath }}:/data
+      - /{{ volumespath }}/docker/filebrowser:/config
+    environment:
+      - FB_BASEURL=/filebrowser
+    restart: always
+    networks:
+      - {{ domain }}-network
+
 ############################################################ CUSTOM NETWORK
 networks:
   {{ domain }}-network:

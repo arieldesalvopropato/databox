@@ -100,7 +100,7 @@
         ansible.builtin.command: mkcert -install
 
       - name: Creating the certificates.
-        ansible.builtin.command: mkcert -key-file key.pem -cert-file cert.pem duplicati.{{ domain }} dashy.{{ domain }} jellyfin.{{ domain }} kasm.{{ domain }} mysql.{{ domain }} nextcloud.{{ domain }} omv.{{ domain }} portainer.{{ domain }} pihole.{{ domain }} uptimekuma.{{ domain }} transmission.{{ domain }}
+        ansible.builtin.command: mkcert -key-file key.pem -cert-file cert.pem duplicati.{{ domain }} dashy.{{ domain }} jellyfin.{{ domain }} kasm.{{ domain }} mysql.{{ domain }} nextcloud.{{ domain }} omv.{{ domain }} portainer.{{ domain }} pihole.{{ domain }} uptimekuma.{{ domain }} transmission.{{ domain }} filebrowser.{{ domain }}
       
       - name: Moving the certificates to nginx cert folder.
         ansible.builtin.command: mv key.pem cert.pem /{{ volumespath }}/docker/nginx/certs/
