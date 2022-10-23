@@ -1,22 +1,83 @@
-pageInfo:
+ pageInfo:
   title: {{ domain }}
-sections: # An array of sections
-- name: Example Section
-  icon: far fa-rocket
-  items:
-  - title: GitHub
-    description: Dashy source code and docs
-    icon: fab fa-github
-    url: https://github.com/Lissy93/dashy
-  - title: Issues
-    description: View open issues, or raise a new one
-    icon: fas fa-bug
-    url: https://github.com/Lissy93/dashy/issues
-- name: Local Services
-  items:
-  - title: Firewall
-    icon: favicon
-    url: http://192.168.1.1/
-  - title: Game Server
-    icon: https://i.ibb.co/710B3Yc/space-invader-x256.png
-    url: http://192.168.130.1/
+ sections:
+  - name: Admin Services
+    icon: ''
+    items:
+      - title: OMV
+        description: OpenMediaVault
+        icon: openmediavault.png
+        url: https://omv.{{ domain }}
+        target: newtab
+        id: 0_1357_omv
+      - title: Portainer
+        description: Container web manager
+        icon: portainer.png
+        url: https://portainer.{{ domain }}
+        target: newtab
+        id: 1_1357_portainer
+      - title: Pi-Hole
+        description: DNS server and Ad-blocker
+        icon: pihole.png
+        url: https://pihole.{{ domain }}/admin
+        target: newtab
+        id: 2_1357_pihole
+      - title: Uptime-Kuma
+        description: Monitors uptime
+        icon: uptimekuma.svg
+        url: https://uptimekuma.{{ domain }}
+        target: newtab
+        id: 3_1357_uptimekuma
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+  - name: Multimedia Services
+    items:
+      - title: Jellyfin
+        description: >-
+          Media System that puts you in control of managing and streaming your
+          media.
+        icon: jellyfin.png
+        url: https://jellyfin.{{ domain }}
+        target: newtab
+        id: 0_1903_jellyfin
+      - title: Transmission
+        description: BitTorrent client
+        icon: transmission.png
+        url: https://transmission.{{ domain }}
+        target: newtab
+        id: 1_1903_transmission
+      - title: NextCloud
+        description: Sync and share files
+        icon: nextcloud.png
+        url: https://nextcloud.{{ domain }}
+        target: newtab
+        id: 2_1903_nextcloud
+  - name: Miscellaneous Services
+    displayData:
+      sortBy: default
+      rows: 1
+      cols: 1
+      collapsed: false
+      hideForGuests: false
+    items:
+      - title: Duplicati
+        description: Block based backup solution
+        icon: duplicati.png
+        url: https://duplicati.{{ domain }}
+        target: newtab
+        id: 0_2232_duplicati
+      - title: Kasm
+        description: Workspaces delivers zero-trust remote browser isolation (RBI)
+        icon: kasm.png
+        url: https://kasm.{{ domain }}
+        target: newtab
+        id: 1_2232_kasm
+ appConfig:
+  theme: dashy-docs
+  language: en
+  layout: auto
+  iconSize: medium

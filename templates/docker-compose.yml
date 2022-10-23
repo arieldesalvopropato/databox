@@ -264,8 +264,8 @@ services:
     tty: true
     volumes:
       - /{{ volumespath }}/docker/samba/public:/public:z
-      - /{{ volumespath }}/docker:/docker:z
-    command: '-s "docker;/docker;yes;no;no;{{ samba_username }}" -s "public;/public;yes" -u "{{ samba_username }};{{ samba_password }}" -p'
+      - /{{ volumespath }}/docker/samba/private:/private:z
+    command: '-s "private;/private;yes;no;no;{{ samba_username }}" -s "public;/public;yes" -u "{{ samba_username }};{{ samba_password }}" -p'
     networks:
       - {{ domain }}-network
 
