@@ -59,7 +59,7 @@
       - name: Creating file for Flexget configuration.
         template:
           src: templates/flexget-config.yml
-          dest: /{{ volumespath }}/docker/flexget/config.yml
+          dest: /{{ volumespath }}/docker/flexget/config/config.yml
 
       - name: Creating the Docker-Compose file.
         template:
