@@ -40,6 +40,4 @@ tasks:
       - Adventure Time
     move:
       # this is where the series will be put
-      to: /{{ volumespath }}/docker/jellyfin/tvshows/{{ tvdb_series_name }}
-      # save the file as "Series Name - SxxEyy - Episode Name.ext"
-      filename: '{{ tvdb_series_name }} - {{ series_id }} - {{ tvdb_ep_name }}{{ location | pathext }}'
+      to: /{{ volumespath }}/docker/jellyfin/tvshows/
