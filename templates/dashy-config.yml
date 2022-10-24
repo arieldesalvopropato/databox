@@ -56,6 +56,12 @@
         url: https://nextcloud.{{ domain }}
         target: newtab
         id: 2_1903_nextcloud
+      - title: FileBrowser
+        description: Easily upload/download/copy files and folders
+        icon: filebrowser.png
+        url: https://filebrowser.{{ domain }}
+        target: newtab
+        id: 3_1903_filebrowser
   - name: Miscellaneous Services
     displayData:
       sortBy: default
