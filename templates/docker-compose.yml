@@ -80,7 +80,7 @@ services:
     container_name: jellyfin
     volumes:
       - /{{ volumespath }}/docker/jellyfin/library:/config
-      - /{{ volumespath }}/docker/jellyfin/tvseries:/data/tvshows
+      - /{{ volumespath }}/docker/jellyfin/tvshows:/data/tvshows
       - /{{ volumespath }}/docker/jellyfin/movies:/data/movies
     ports:
       - 8096:8096

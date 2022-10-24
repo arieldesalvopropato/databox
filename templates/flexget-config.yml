@@ -1,4 +1,4 @@
-#Author: https://github.com/pablokbs/plex-rpi/tree/master/flexget
+#Create an account in https://showrss.info/
 
 web_server:
   bind: 0.0.0.0
@@ -8,27 +8,38 @@ web_server:
 schedules:
   - tasks: '*'
     interval:
-      minutes: 30
+      minutes: 1440
 
-templates:
-  tv:
-    series:
-      settings:
-        tv:
-          exact: yes
-          propers: 12 hours
-          quality: 720p
-      tv:
-      - Moonshine
-
+tasks:
+#Use this config as example, if you like to add other Tv Show,
+#copy and pase this section and put the new rss link (Feed for this show).
+  download-MrRobot:
+    rss: https://showrss.info/show/273.rss
+    all_series: yes
     transmission:
-      host: http://{{ hostip }}
+      host: {{ hostip }}
       port: 9091
       username: {{ transmission_username }}
       password: {{ transmission_password }}
 
-tasks:
-  eztvrss:
-    rss: https://eztv.ag/ezrss.xml
-    template: tv
-    priority: 2
+  sort-files:
+    find:
+      # directory with the files to be sorted
+      path: /{{ volumespath }}/docker/transmission/downloads
+      # fetch all avi, mkv and mp4 files, skips the .part files (unfinished torrents)
+      regexp: '.*\.(avi|mkv|mp4)$'
+    accept_all: yes
+    seen: local
+    # this is needed for the episode names
+    thetvdb_lookup: yes
+    all_series:
+      # for some reason all_series rejects all episodes here, even with seen: local, so parse_only must be added
+      parse_only: yes
+    # TVDB doesn't recognise "Adventure Time with Finn and Jake" so you must add such exceptions here manually
+    series:
+      - Adventure Time
+    move:
+      # this is where the series will be put
+      to: /{{ volumespath }}/docker/jellyfin/tvshows/{{ tvdb_series_name }}
+      # save the file as "Series Name - SxxEyy - Episode Name.ext"
+      filename: '{{ tvdb_series_name }} - {{ series_id }} - {{ tvdb_ep_name }}{{ location | pathext }}'
