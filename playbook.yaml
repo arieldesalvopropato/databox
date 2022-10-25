@@ -126,3 +126,6 @@
 
       - debug:
           msg: "{{ output.stderr_lines }}"
+
+      - name: Restarting Portainer to avoid issues related to the volume.
+        ansible.builtin.command: docker restart portainer
