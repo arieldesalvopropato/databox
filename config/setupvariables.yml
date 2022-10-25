@@ -39,9 +39,5 @@ pihole_password: changeMe! #Set a secure password here or it will be random.
 samba_username: changeMe!
 samba_password: changeMe!
 
-#Transmission
-transmission_username: changeMe!
-transmission_password: changeMe!
-
 #Flexget
 flexget_password: changeMe!

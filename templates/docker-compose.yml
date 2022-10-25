@@ -120,8 +120,6 @@ services:
     container_name: transmission
     environment:
       - TZ= {{ default_tz }}
-      - USER= {{ transmission_username }}
-      - PASS= {{ transmission_password }}
     volumes:
       - /{{ volumespath }}/docker/transmission/config:/config
       - /{{ volumespath }}/docker/transmission/downloads:/downloads
@@ -134,26 +132,35 @@ services:
     networks: 
       - {{ domain }}-network
 
-############################################################ FLEXGET
-  flexget:
-    image: wiserain/flexget
-    container_name: flexget
-    ports :
-      - 5050:5050
-    volumes:
-      - /{{ volumespath }}/docker/flexget/data:/data
-      - /{{ volumespath }}/docker/flexget/config:/config
-      - /{{ volumespath }}/docker/transmission/downloads:/downloads
-      - /{{ volumespath }}/docker/flexget/storage:/storage
+############################################################ SONARR
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
     environment:
       - TZ= {{ default_tz }}
-      - FG_WEBUI_PASSWD= {{ flexget_password }}
-      - TORRENT_PLUGIN= transmission
-    links:
-      - transmission
+    volumes:
+      - /{{ volumespath }}/docker/sonarr/config:/config
+      - /{{ volumespath }}/docker/jellyfin/tvshows:/tv #Optional
+      - /{{ volumespath }}/docker/transmission/downloads:/downloads #Optional
+    ports:
+      - 8989:8989
     restart: unless-stopped
-    networks:
-      - {{ domain }}-network
+    networks: 
+        - {{ domain }}-network
+
+############################################################ JACKETT
+  jackett:
+    image: linuxserver/jackett
+    container_name: jackett
+    volumes:
+      - /{{ volumespath }}/docker/jackett/config:/config
+    environment:
+      - TZ= {{ default_tz }}
+    ports:
+      - 9117:9117
+    restart: unless-stopped
+    networks: 
+        - {{ domain }}-network
 
 ############################################################ UPTIME-KUMA
   uptime-kuma:
