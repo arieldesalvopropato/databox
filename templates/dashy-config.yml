@@ -50,6 +50,20 @@
         url: https://transmission.{{ domain }}
         target: newtab
         id: 1_1903_transmission
+      - title: Sonarr
+        description: >-
+          Monitor multiple RSS feeds for new episodes of your favorite shows and
+          will grab, sort and rename them
+        icon: sonarr.png
+        url: https://sonarr.{{ domain }}
+        target: newtab
+        id: 4_1903_sonarr
+      - title: Jackett
+        description: Jackett works as a proxy server, it translates queries from apps
+        icon: jackett.png
+        url: https://jackett.{{ domain }}
+        target: newtab
+        id: 5_1903_jackett  
       - title: NextCloud
         description: Sync and share files
         icon: nextcloud.png
