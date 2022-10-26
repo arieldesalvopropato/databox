@@ -87,7 +87,7 @@
         apt:
           name: docker-compose
           state: present
-  
+
   # Play3 - Certificates related tasks.
   - name: Play MkCert - rootCA installation and creation of certificates for services.
     hosts: localhost

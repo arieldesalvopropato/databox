@@ -22,7 +22,7 @@ services:
       - 9443:9443
     networks: 
       - {{ domain }}-network
-
+      
 ############################################################ KASM [OPTIONAL]
   kasm:
     image: lscr.io/linuxserver/kasm:latest
@@ -320,3 +320,9 @@ services:
 networks:
   {{ domain }}-network:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: br-{{ domain }}
+    ipam:
+      config:
+        - subnet: 10.10.0.0/16
+          gateway: 10.10.0.1
