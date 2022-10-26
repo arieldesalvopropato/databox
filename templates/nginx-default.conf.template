@@ -61,7 +61,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://dashy:4000;
+    proxy_pass http://{{ hostip }}:4000;
   }
 }
 
@@ -140,7 +140,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://pihole:81;
+    proxy_pass http://{{ hostip }}:81;
   }
 }
 
@@ -200,7 +200,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass https://nextcloud:2443;
+    proxy_pass https://{{ hostip }}:2443;
   }
 }
 
