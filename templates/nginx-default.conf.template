@@ -21,7 +21,7 @@ server {
     proxy_set_header X-Forwarded-Port 443;
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
-    proxy_pass http://omv.{{ domain }}:88;
+    proxy_pass http://{{ hostip }}:88;
   }
 }
 
@@ -41,7 +41,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://portainer.{{ domain }}:9000;
+    proxy_pass http://portainer:9000;
   }
 }
 
@@ -61,7 +61,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://dashy.{{ domain }}:4000;
+    proxy_pass http://dashy:4000;
   }
 }
 
@@ -81,7 +81,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://duplicati.{{ domain }}:8200;
+    proxy_pass http://duplicati:8200;
   }
 }
 
@@ -101,7 +101,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass https://kasm.{{ domain }}:3000;
+    proxy_pass https://kasm:3000;
   }
 }
 
@@ -117,7 +117,7 @@ server {
     proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header   Host $host;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://uptimekuma.{{ domain }}:3001;
+    proxy_pass http://uptimekuma:3001;
     proxy_http_version 1.1;
     proxy_set_header   Upgrade $http_upgrade;
     proxy_set_header   Connection "upgrade";
@@ -140,7 +140,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://pihole.{{ domain }}:81;
+    proxy_pass http://pihole:81;
   }
 }
 
@@ -160,7 +160,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://jellyfin.{{ domain }}:8096;
+    proxy_pass http://jellyfin:8096;
   }
 }
 
@@ -180,7 +180,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://transmission.{{ domain }}:9091;
+    proxy_pass http://transmission:9091;
   }
 }
 
@@ -200,7 +200,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass https://nextcloud.{{ domain }}:2443;
+    proxy_pass https://nextcloud:2443;
   }
 }
 
@@ -220,7 +220,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://filebrowser.{{ domain }}:8080;
+    proxy_pass http://filebrowser:8080;
   }
 }
 
@@ -240,7 +240,7 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://sonarr.{{ domain }}:8989;
+    proxy_pass http://sonarr:8989;
   }
 }
 
@@ -260,6 +260,6 @@ server {
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
-    proxy_pass http://jackett.{{ domain }}:9117;
+    proxy_pass http://jackett:9117;
   }
 }
