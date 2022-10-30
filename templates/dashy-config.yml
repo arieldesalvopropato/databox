@@ -4,12 +4,12 @@
   - name: Admin Services
     icon: ''
     items:
-      - title: OMV
-        description: OpenMediaVault
-        icon: openmediavault.png
-        url: https://omv.{{ domain }}
+      - title: Cockpit
+        description: Cockpit
+        icon: cockpit.png
+        url: https://cockpit.{{ domain }}
         target: newtab
-        id: 0_1357_omv
+        id: 0_1357_cockpit
       - title: Portainer
         description: Container web manager
         icon: portainer.png
@@ -28,6 +28,12 @@
         url: https://uptimekuma.{{ domain }}
         target: newtab
         id: 3_1357_uptimekuma
+      - title: Kibana
+        description: Logs
+        icon: kibana.png
+        url: https://kibana.{{ domain }}
+        target: newtab
+        id: 4_1357_kibana
     displayData:
       sortBy: default
       rows: 1

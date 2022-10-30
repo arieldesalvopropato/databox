@@ -12,3 +12,4 @@
 {{ hostip }} sonarr.{{ domain }}
 {{ hostip }} jackett.{{ domain }}
 {{ hostip }} filebrowser.{{ domain }}
+{{ hostip }} kibana.{{ domain }}

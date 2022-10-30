@@ -8,7 +8,7 @@ server {
 
 server {
   listen 443 ssl;
-  server_name omv.{{ domain }};
+  server_name cockpit.{{ domain }};
 
   ssl_certificate /etc/nginx/certs/cert.pem;
   ssl_certificate_key /etc/nginx/certs/key.pem;
@@ -21,7 +21,7 @@ server {
     proxy_set_header X-Forwarded-Port 443;
     proxy_set_header X-Forwarded-Server $host;
     proxy_set_header X-Forwarded-Proto https;
-    proxy_pass http://{{ hostip }}:88;
+    proxy_pass https://{{ hostip }}:9090;
   }
 }
 
@@ -261,5 +261,25 @@ server {
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header X-NginX-Proxy true;
     proxy_pass http://jackett:9117;
+  }
+}
+
+ server {
+  listen 443 ssl;
+  server_name kibana.{{ domain }};
+
+  ssl_certificate /etc/nginx/certs/cert.pem;
+  ssl_certificate_key /etc/nginx/certs/key.pem;
+
+  location / {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Host $host:443;
+    proxy_set_header X-Forwarded-Port 443;
+    proxy_set_header X-Forwarded-Server $host;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header X-NginX-Proxy true;
+    proxy_pass http://kibana:5601;
   }
 }
