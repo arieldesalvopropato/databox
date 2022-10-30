@@ -97,6 +97,12 @@
         apt:
           name: docker-compose
           state: present
+      
+      - name: Install of Rsync
+        apt:
+          name: rsync
+          state: present
+
 
   # Play3 - Certificates related tasks.
   - name: Play MkCert - rootCA installation and creation of certificates for services.
@@ -119,10 +125,40 @@
         shell: mkcert -CAROOT
         register: CAroot
 
-      - name: Coping the rootCA certificate to the share folder.
+      - name: Copying the rootCA certificate to the share folder.
         ansible.builtin.command: cp /root/.local/share/mkcert/rootCA.pem /{{ volumespath }}/docker/samba/public/rootCA.pem
 
-  # Play4 - Docker-Compose related tasks.
+  # Play4 - Rsync related tasks.
+  - name: Play Rsync - setup of rsync.
+    hosts: localhost
+    vars_files:
+      - config/setupvariables.yml
+    become: yes
+    become_user: root
+    tasks:
+      - name: Copying the service.
+        ansible.builtin.command: cp /lib/systemd/system/rsync.service /etc/systemd/system/rsync.service
+      
+      - name: Restarting the service.
+        ansible.builtin.command: systemctl restart rsync
+      
+      - name: Creating file for rsync configuration.
+        template:
+          src: templates/rsyncd.conf
+          dest: /etc/rsyncd.conf
+
+      - name: Creating file for rsync secrets.
+        template:
+          src: templates/rsyncd.passwd
+          dest: /etc/rsyncd.passwd
+
+      - name: Change rsync secret file permissions.
+        ansible.builtin.command: chmod 0600 /etc/rsyncd.passwd
+
+      - name: Restarting the service.
+        ansible.builtin.command: systemctl restart rsync
+
+  # Play5 - Docker-Compose related tasks.
   - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
     hosts: localhost
     vars_files:

@@ -38,3 +38,7 @@ pihole_password: changeMe! #Set a secure password here or it will be random.
 #Samba
 samba_username: changeMe!
 samba_password: changeMe!
+
+#Rsync
+rsync_username: changeMe! 
+rsync_password: changeMe!

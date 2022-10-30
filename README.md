@@ -4,11 +4,11 @@ Scripts to implement a home server using Docker.
 
 ## Introduction
 
-The goal of this project is to make more easy the deployment and installation of a home server, without the need to perform the installation of the services used. And provide a more practical solution when it comes to having our own server.
+The goal of this project is to make more easy the deployment and installation of a home server, without the need to perform the installation of the services to use and provide a more practical solution when it comes to having our own server.
 
 ## Operating Systems
 
-The requirements of this script for use are not determined on a single particular operating system. It was developed using OpenMediaVault which as a base system has Debian, so you could use operating systems like Ubuntu, Debian or Ubuntu Server out of the box. In case you choose another distribution like Arch or Fedora you will have to make modifications and I cannot guarantee it will work.
+The requirements of this script for use are not determined on a single particular operating system. It was developed using Ubuntu Server, so you could use operating systems like Ubuntu or Debian out of the box. In case you choose another distribution like Arch or Fedora you will have to make modifications and I cannot guarantee it will work.
 
 ## Containers
 
@@ -29,16 +29,19 @@ The requirements of this script for use are not determined on a single particula
 * Wireguard
 * Samba
 * FileBrowser
+* Elasticsearch
+* Kibana
+* Filebeat
 
 ### Optional
 * No-IP
 
 ## Usage
-Install a base operating system. For the development of the Scripts and Playbooks I used OpenMediaVault (https://www.openmediavault.org/). In case of using an operating system with a package manager other than apt, define it in the playbook yaml file.
+Install a base operating system. For the development of the Scripts and Playbooks I used Ubuntu Server (https://ubuntu.com/download/server). In case of using an operating system with a package manager different to apt, define it in the playbook yaml file.
 
-If you choose to use OpenMediaVault as your base system, please consider the following modifications to your server:
+If you choose to use some NAS system like for example OpenMediaVault as your base system, please consider the following modifications to your server:
 * Change the default port of the http service 80 to 88, this port will be used by the Nginx service.
-* Install OMV-Extras to have more functionality on your server, including Docker, Portainer or Yacht. (https://wiki.omv-extras.org/)
+* Install OMV-Extras to have more functionality on your server, including Docker. (https://wiki.omv-extras.org/)
 * Install Docker from OMV-Extras options in OpenMediaVault webgui.
 
 To deploy the server perform the following steps:

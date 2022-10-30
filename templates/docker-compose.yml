@@ -317,7 +317,6 @@ services:
       - {{ domain }}-network
 
 ############################################################ EKF
-#More info: https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
     environment:
