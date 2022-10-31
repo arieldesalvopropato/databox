@@ -147,7 +147,7 @@
     tasks:
       - name: Creating file for rsync configuration.
         template:
-          src: templates/cockpit.confg
+          src: templates/cockpit.conf
           dest: /etc/cockpit/cockpit.conf
 
       - name: Restarting the service.
@@ -178,7 +178,9 @@
           dest: /etc/rsyncd.passwd
 
       - name: Change rsync secret file permissions.
-        ansible.builtin.command: chmod 0600 /etc/rsyncd.passwd
+        ansible.builtin.file:
+          path: /etc/rsyncd.passwd
+          mode: 0600
 
       - name: Restarting the service.
         ansible.builtin.command: systemctl restart rsync
@@ -214,7 +216,7 @@
           name: "Delete FileBeat indices older then 30 days"
           minute: "0"
           hour: "1"
-          job: curator_cli --host localhost:9200 --dry-run delete_indices --filter_list {{ curator_filter }}
+          job: curator_cli --host localhost:9200 delete_indices --filter_list {{ curator_filter }}
 
   # Play7 - Docker-Compose related tasks.
   - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
@@ -225,7 +227,7 @@
     become_user: root
     tasks:
       - name: Running Docker-Compose.
-        shell: chdir=/{{ volumespath }} docker-compose up -d
+        shell: chdir=/{{ volumespath }} docker-compose --profile active up -d
         register: output
 
       - debug:
