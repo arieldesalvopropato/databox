@@ -162,6 +162,18 @@
 
       - name: Restarting the service.
         ansible.builtin.command: systemctl restart rsync
+      
+      - name: Create a login user for rsync.
+        user:
+            name: {{ rsync_username }}
+            password: {{ rsync_password }}
+            groups: # Empty by default, here we give it some groups
+              - {{ rsync_username }}
+            state: present
+            shell: /bin/bash       # Defaults to /bin/bash
+            system: no             # Defaults to no
+            createhome: no        # Defaults to yes
+            home: /home/{{ rsync_username }}  # Defaults to /home/<username>
 
   # Play5 - Curator related tasks.
   - name: Play Curator - setup of curator cron task.
