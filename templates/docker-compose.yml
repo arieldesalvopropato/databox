@@ -317,6 +317,7 @@ services:
       - {{ domain }}-network
 
 ############################################################ EKF
+#https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
     environment:
@@ -325,7 +326,7 @@ services:
     ports:
       - 9200:9200
     volumes:
-      - elasticsearch_data:/usr/share/elasticsearch/data
+      - /{{ volumespath }}/elasticsearch:/usr/share/elasticsearch/data
     networks:
       - {{ domain }}-network
 
@@ -345,12 +346,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - {{ domain }}-network
-
-
-
-############################################################ VOLUMES
-volumes:
-    elasticsearch_data:
 
 ############################################################ CUSTOM NETWORK
 networks:
