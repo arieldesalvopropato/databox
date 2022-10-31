@@ -29,11 +29,7 @@ The requirements of this script for use are not determined on a single particula
 * Wireguard
 * Samba
 * FileBrowser
-* Elasticsearch
-* Kibana
-* Filebeat
-
-### Optional
+* EKF (Elasticsearch - Kibana - Filebeat)
 * No-IP
 
 ## Usage

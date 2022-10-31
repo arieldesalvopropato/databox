@@ -22,6 +22,7 @@ services:
       - 9443:9443
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ portainer_status }}"]
       
 ############################################################ KASM [OPTIONAL]
   kasm:
@@ -40,6 +41,7 @@ services:
     restart: unless-stopped
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ kasm_status }}"]
 
 ############################################################ NEXTCLOUD
   nextcloud:
@@ -55,6 +57,7 @@ services:
       - {{ domain }}-network
     depends_on:
       - mysql
+    profiles: ["{{ nextcloud_status }}"]
 
 ############################################################ MYSQL
   mysql:
@@ -73,6 +76,7 @@ services:
       - 4306:3306 #It's reccommended not use the default port
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ nextcloud_status }}"]
 
 ############################################################ JELLYFIN
   jellyfin:
@@ -90,6 +94,7 @@ services:
     restart: unless-stopped
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ jellyfin_status }}"]
 
 ############################################################ PI-HOLE
   pihole:
@@ -113,6 +118,7 @@ services:
     restart: unless-stopped
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ pihole_status }}"]
 
 ############################################################ TRANSMISSION
   transmission:
@@ -131,6 +137,7 @@ services:
     restart: unless-stopped
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ transmission_status }}"]
 
 ############################################################ SONARR
   sonarr:
@@ -147,6 +154,7 @@ services:
     restart: unless-stopped
     networks: 
         - {{ domain }}-network
+    profiles: ["{{ sonarr_status }}"]
 
 ############################################################ JACKETT
   jackett:
@@ -161,6 +169,7 @@ services:
     restart: unless-stopped
     networks: 
         - {{ domain }}-network
+    profiles: ["{{ jackett_status }}"]
 
 ############################################################ UPTIME-KUMA
   uptime-kuma:
@@ -173,6 +182,7 @@ services:
     restart: always
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ uptimekuma_status }}"]
 
 ############################################################ WIREGUARD [OPTIONAL]
   wireguard:
@@ -200,6 +210,7 @@ services:
     restart: always
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ wireguard_status }}"]
 
 ############################################################ DASHY
   dashy:
@@ -213,6 +224,7 @@ services:
     restart: unless-stopped
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ dashy_status }}"]
 
 ############################################################ WATCHTOWER
   watchtower:
@@ -230,6 +242,7 @@ services:
       - "com.centurylinklabs.watchtower.enable=true"
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ watchtower_status }}"]
 
 ############################################################ DUPLICATI
   duplicati:
@@ -246,22 +259,24 @@ services:
     restart: unless-stopped
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ duplicati_status }}"]
 
 ############################################################ NO-IP [OPTIONAL]
-#  no-ip:
-#    image: uping/no-ip
-#    container_name: no-ip
-#    restart: unless-stopped
-#    environment:
-#      - USERNAME= {{ noip_username }}
-#      - PASSWORD= {{ noip_password }}
-#      - DOMAINS= {{ noip_domains }}
-#      - INTERVAL= {{ noip_interval }}
-#    volumes:
-#      - /etc/localtime:/etc/localtime:ro
-#      - /{{ volumespath }}/docker/no-ip/config:/config
-#    networks: 
-#      - {{ domain }}-network
+  no-ip:
+    image: uping/no-ip
+    container_name: no-ip
+    restart: unless-stopped
+    environment:
+      - USERNAME= {{ noip_username }}
+      - PASSWORD= {{ noip_password }}
+      - DOMAINS= {{ noip_domains }}
+      - INTERVAL= {{ noip_interval }}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /{{ volumespath }}/docker/no-ip/config:/config
+    networks: 
+      - {{ domain }}-network
+    profiles: ["{{ noip_status }}"]
 
 ############################################################ NGINX
   nginx:
@@ -276,6 +291,7 @@ services:
       - /{{ volumespath }}/docker/nginx/certs:/etc/nginx/certs
     networks: 
       - {{ domain }}-network
+    profiles: ["{{ ngnix_status }}"]
 
 ############################################################ SAMBA
   samba:
@@ -300,6 +316,7 @@ services:
     command: '-s "private;/private;yes;no;no;{{ samba_username }}" -s "public;/public;yes" -u "{{ samba_username }};{{ samba_password }}" -p'
     networks:
       - {{ domain }}-network
+    profiles: ["{{ samba_status }}"]
 
 ############################################################ FILEBROWSER
   filebrowser:
@@ -315,6 +332,7 @@ services:
     restart: always
     networks:
       - {{ domain }}-network
+    profiles: ["{{ filebrowser_status }}"]
 
 ############################################################ EKF
 #https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
@@ -330,6 +348,7 @@ services:
       - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - {{ domain }}-network
+    profiles: ["{{ efk_status }}"]
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.2.0
@@ -338,6 +357,7 @@ services:
       - 5601:5601
     networks:
       - {{ domain }}-network
+    profiles: ["{{ efk_status }}"]
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.2.0
@@ -349,6 +369,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - {{ domain }}-network
+    profiles: ["{{ efk_status }}"]
 
 
 ############################################################ VOLUMES
