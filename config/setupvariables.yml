@@ -40,7 +40,8 @@ samba_username: changeMe!
 samba_password: changeMe!
 
 #Rsync
-rsync_username: changeMe! 
+rsync_username: changeMe!
+rsync_group: changeMe!
 rsync_password: changeMe!
 
 #Curator 

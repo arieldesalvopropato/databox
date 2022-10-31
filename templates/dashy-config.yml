@@ -7,7 +7,7 @@
       - title: Cockpit
         description: Cockpit
         icon: cockpit.png
-        url: https://cockpit.{{ domain }}
+        url: https://{{ hostip }}:9090
         target: newtab
         id: 0_1357_cockpit
       - title: Portainer

@@ -320,18 +320,20 @@ services:
 #https://www.sarulabs.com/post/5/2019-08-12/sending-docker-logs-to-elasticsearch-and-kibana-with-filebeat.html
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+    container_name: elasticsearch
     environment:
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
       - discovery.type=single-node
     ports:
       - 9200:9200
     volumes:
-      - /{{ volumespath }}/elasticsearch:/usr/share/elasticsearch/data
+      - elasticsearch_data:/usr/share/elasticsearch/data
     networks:
       - {{ domain }}-network
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.2.0
+    container_name: kibana
     ports:
       - 5601:5601
     networks:
@@ -339,13 +341,19 @@ services:
 
   filebeat:
     image: docker.elastic.co/beats/filebeat:7.2.0
+    container_name: filebeat
     user: root
     volumes:
-      - /{{ volumespath }}/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /{{ volumespath }}/docker/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
       - /var/lib/docker:/var/lib/docker:ro
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - {{ domain }}-network
+
+
+############################################################ VOLUMES
+volumes:
+    elasticsearch_data:
 
 ############################################################ CUSTOM NETWORK
 networks:

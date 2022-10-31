@@ -37,11 +37,11 @@ The requirements of this script for use are not determined on a single particula
 * No-IP
 
 ## Usage
-Install a base operating system. For the development of the Scripts and Playbooks I used Ubuntu Server (https://ubuntu.com/download/server). In case of using an operating system with a package manager different to apt, define it in the playbook yaml file.
+Install a base operating system. For the development of the Scripts and Playbooks I used [Ubuntu Server](https://ubuntu.com/download/server). In case of using an operating system with a package manager different to apt, define it in the playbook yaml file.
 
 If you choose to use some NAS system like for example OpenMediaVault as your base system, please consider the following modifications to your server:
 * Change the default port of the http service 80 to 88, this port will be used by the Nginx service.
-* Install OMV-Extras to have more functionality on your server, including Docker. (https://wiki.omv-extras.org/)
+* Install [OMV-Extras](https://wiki.omv-extras.org/) to have more functionality on your server, including Docker.
 * Install Docker from OMV-Extras options in OpenMediaVault webgui.
 
 To deploy the server perform the following steps:
@@ -50,7 +50,7 @@ To deploy the server perform the following steps:
 * git clone https://github.com/arieldesalvopropato/databox.git
 * cd databox-main
 * Change the "setupvariables.yml" file in the config folder with your own preferences.
-* ansible-playbook playbook.yaml
+* sudo ansible-playbook playbook.yaml
 
 ## Authors
 

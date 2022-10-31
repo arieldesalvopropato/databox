@@ -29,19 +29,24 @@
         - dashy
         - samba
         - filebeat
-      
+
       - name: Create a directory for share with Samba (Docker).
         file:
           path: /{{ volumespath }}/docker/samba/public
           owner: root
           group: root
           state: directory
-          mode: 777
+          mode: 0755
 
       - name: Creating file for local DNS in Pi-Hole.
         template:
           src: templates/pihole-custom.list
           dest: /{{ volumespath }}/docker/pihole/etc-pihole/custom.list
+      
+      - name: Creating config file for Pi-Hole.
+        template:
+          src: templates/pihole-FTL.conf
+          dest: /{{ volumespath }}/docker/pihole/etc-pihole/pihole-FTL.conf
 
       - name: Creating file for Nginx configuration.
         template:
@@ -52,10 +57,10 @@
         template:
           src: templates/dashy-config.yml
           dest: /{{ volumespath }}/docker/dashy/config.yml
-      
+
       - name: Copying icons for Dashy.
         ansible.builtin.command: cp -R templates/item-icons /{{ volumespath }}/docker/dashy/item-icons
-      
+
       - name: Creating file for Filebeat configuration.
         template:
           src: templates/filebeat-config.yml
@@ -65,7 +70,7 @@
         template:
           src: templates/docker-compose.yml
           dest: /{{ volumespath }}/docker-compose.yml
-  
+
   # Play2 - Server preparation tasks.
   - name: Play Update/Install - Update the system and Install of the required packages.
     hosts: localhost
@@ -87,17 +92,17 @@
         apt:
           name: mkcert
           state: present
-      
+
       - name: Install of Docker.
         apt:
           name: docker.io
           state: present
-  
+
       - name: Install of Docker-Compose.
         apt:
           name: docker-compose
           state: present
-      
+
       - name: Install of Rsync
         apt:
           name: rsync
@@ -106,8 +111,7 @@
       - name: Install of Curator
         apt:
           name: elasticsearch-curator
-          state: present          
-
+          state: present
 
   # Play3 - Certificates related tasks.
   - name: Play MkCert - rootCA installation and creation of certificates for services.
@@ -122,10 +126,10 @@
 
       - name: Creating the certificates.
         ansible.builtin.command: mkcert -key-file key.pem -cert-file cert.pem duplicati.{{ domain }} dashy.{{ domain }} jellyfin.{{ domain }} kasm.{{ domain }} mysql.{{ domain }} nextcloud.{{ domain }} cockpit.{{ domain }} portainer.{{ domain }} pihole.{{ domain }} uptimekuma.{{ domain }} transmission.{{ domain }} filebrowser.{{ domain }} sonarr.{{ domain }} jackett.{{ domain }} kibana.{{ domain }}
-      
+
       - name: Moving the certificates to nginx cert folder.
         ansible.builtin.command: mv key.pem cert.pem /{{ volumespath }}/docker/nginx/certs/
-      
+
       - name: Get CAroot dir.
         shell: mkcert -CAROOT
         register: CAroot
@@ -133,8 +137,24 @@
       - name: Copying the rootCA certificate to the share folder.
         ansible.builtin.command: cp /root/.local/share/mkcert/rootCA.pem /{{ volumespath }}/docker/samba/public/rootCA.pem
 
-  # Play4 - Rsync related tasks.
-  - name: Play Rsync - setup of rsync.
+  # Play4 - Cockpit related tasks.
+  - name: Play Cockpit - Setup of Cockpit.
+    hosts: localhost
+    vars_files:
+      - config/setupvariables.yml
+    become: yes
+    become_user: root
+    tasks:
+      - name: Creating file for rsync configuration.
+        template:
+          src: templates/cockpit.confg
+          dest: /etc/cockpit/cockpit.conf
+
+      - name: Restarting the service.
+        ansible.builtin.command: systemctl restart cockpit.service
+
+  # Play5 - Rsync related tasks.
+  - name: Play Rsync - Setup of Rsync.
     hosts: localhost
     vars_files:
       - config/setupvariables.yml
@@ -143,10 +163,10 @@
     tasks:
       - name: Copying the service.
         ansible.builtin.command: cp /lib/systemd/system/rsync.service /etc/systemd/system/rsync.service
-      
+
       - name: Restarting the service.
         ansible.builtin.command: systemctl restart rsync
-      
+
       - name: Creating file for rsync configuration.
         template:
           src: templates/rsyncd.conf
@@ -162,20 +182,26 @@
 
       - name: Restarting the service.
         ansible.builtin.command: systemctl restart rsync
-      
+
+      - name: "Create backups group"
+        group:
+          name: "{{ rsync_group }}"
+          state: present
+
       - name: Create a login user for rsync.
         user:
-            name: {{ rsync_username }}
-            password: {{ rsync_password }}
-            groups: # Empty by default, here we give it some groups
-              - {{ rsync_username }}
-            state: present
-            shell: /bin/bash       # Defaults to /bin/bash
-            system: no             # Defaults to no
-            createhome: no        # Defaults to yes
-            home: /home/{{ rsync_username }}  # Defaults to /home/<username>
+          name: "{{ rsync_username }}"
+          password: "{{ rsync_password | password_hash('sha512') }}"
+          groups: "{{ rsync_group }}"
+          comment: "{{ rsync_username }}"
+          state: present
+          expires: "-1"
+          shell: /bin/bash                  # Defaults to /bin/bash
+          system: no                        # Defaults to no
+          createhome: no                    # Defaults to yes
+          home: /home/{{ rsync_username }}  # Defaults to /home/<username>
 
-  # Play5 - Curator related tasks.
+  # Play6 - Curator related tasks.
   - name: Play Curator - setup of curator cron task.
     hosts: localhost
     vars_files:
@@ -183,17 +209,14 @@
     become: yes
     become_user: root
     tasks:
-      - name: Setup task in cron to remove old logs from EKF 
+      - name: Setup task in cron to remove old logs from EKF
         ansible.builtin.cron:
           name: "Delete FileBeat indices older then 30 days"
           minute: "0"
           hour: "1"
           job: curator_cli --host localhost:9200 --dry-run delete_indices --filter_list {{ curator_filter }}
-      
 
-
-
-  # Play6 - Docker-Compose related tasks.
+  # Play7 - Docker-Compose related tasks.
   - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
     hosts: localhost
     vars_files:
