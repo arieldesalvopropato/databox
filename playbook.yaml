@@ -26,6 +26,7 @@
         - pihole/etc-pihole
         - nginx
         - nginx/certs
+        - nginx/html
         - dashy
         - samba
         - filebeat
@@ -52,6 +53,14 @@
         template:
           src: templates/nginx-default.conf.template
           dest: /{{ volumespath }}/docker/nginx/nginx-default.conf.template
+      
+      - name: Creating file for Nginx error page.
+        template:
+          src: templates/error.html
+          dest: /{{ volumespath }}/docker/nginx/html/error.html
+
+      - name: Copying logo for error page.
+        ansible.builtin.command: cp Databox-logos_black.png /{{ volumespath }}/docker/nginx/html/Databox-logos_black.png
 
       - name: Creating file for Dashy configuration.
         template:

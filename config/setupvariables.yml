@@ -48,7 +48,7 @@ rsync_password: changeMe!
 #Only change the time of retention.
 curator_filter: '[{"filtertype": "pattern", "kind": "prefix", "value": "filebeat-"}, {"filtertype": "age", "source": "name", "direction": "older", "timestring": "%Y.%m.%d", "unit": "days","unit_count": 30}]'
 
-#Select the service you like, recommended services to keep active: 
+#Select the service you like, recommended services to keep active:
 #[dashy, portainer, ngnix, pihole, watchtower, samba]
 #Options available: active | disabled
 dashy_status: active

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ domain }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--# if expr="$status = 502" -->
+      <meta http-equiv="refresh" content="2">
+    <!--# endif -->
+  </head>
+<body>
+  <!--# if expr="$status = 502" -->
+  <img src="theoffice.gif" alt="Databox" style="width:500px;height:600px;">
+    <h1>mmmm what an awkward situation...</h1>
+    <p>Possibly the service you want to access is not active.</p>
+    <p>Remember to activate it in your configuration file!</p>
+  <!--# else -->
+  <img src="thisisfine.gif" alt="Databox" style="width:500px;height:600px;">
+    <h1>Ok, something went wrong</h1>
+    <p>- Check if what you are looking for exists.</p>
+    <p>- Check that the containers are running.</p>
+    <p>May the force be with you...</p>
+  <!--# endif -->
+</body>
+</html>
