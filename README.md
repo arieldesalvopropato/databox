@@ -46,7 +46,7 @@ To deploy the server perform the following steps:
 * git clone https://github.com/arieldesalvopropato/databox.git
 * cd databox
 * Change the "setupvariables.yml" file in the config folder with your own preferences.
-* ansible-playbook playbook.yaml
+* ansible-playbook playbook.yaml -i inventory/hosts.ini
 
 ## Authors
 
@@ -54,4 +54,4 @@ To deploy the server perform the following steps:
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the Apache License, Version 2.0 - see the [LICENSE.md](LICENSE.md) file for details

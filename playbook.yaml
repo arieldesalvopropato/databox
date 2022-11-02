@@ -6,7 +6,7 @@
 ---
   # Play1 - Docker preparation tasks.
   - name: Play Dir/Config - Create Docker directories and configuration files.
-    hosts: localhost
+    hosts: servers
     vars_files:
       - config/setupvariables.yml
     become: yes
@@ -85,7 +85,7 @@
 
   # Play2 - Server preparation tasks.
   - name: Play Update/Install - Update the system and Install of the required packages.
-    hosts: localhost
+    hosts: servers
     vars_files:
       - config/setupvariables.yml
     become: yes
@@ -124,10 +124,15 @@
         apt:
           name: elasticsearch-curator
           state: present
+      
+      - name: Install of Apache utils
+        apt:
+          name: apache2-utils
+          state: present
 
   # Play3 - Certificates related tasks.
   - name: Play MkCert - rootCA installation and creation of certificates for services.
-    hosts: localhost
+    hosts: servers
     vars_files:
       - config/setupvariables.yml
     become: yes
@@ -151,7 +156,7 @@
 
   # Play4 - Cockpit related tasks.
   - name: Play Cockpit - Setup of Cockpit.
-    hosts: localhost
+    hosts: servers
     vars_files:
       - config/setupvariables.yml
     become: yes
@@ -167,7 +172,7 @@
 
   # Play5 - Rsync related tasks.
   - name: Play Rsync - Setup of Rsync.
-    hosts: localhost
+    hosts: servers
     vars_files:
       - config/setupvariables.yml
     become: yes
@@ -217,7 +222,7 @@
 
   # Play6 - Curator related tasks.
   - name: Play Curator - setup of curator cron task.
-    hosts: localhost
+    hosts: servers
     vars_files:
       - config/setupvariables.yml
     become: yes
@@ -230,9 +235,20 @@
           hour: "1"
           job: curator_cli --host localhost:9200 delete_indices --filter_list {{ curator_filter }}
 
-  # Play7 - Docker-Compose related tasks.
+  # Play7 - Nginx related tasks.
+  - name: Play htpasswd - setup of htpasswd for Nginx.
+    hosts: servers
+    vars_files:
+      - config/setupvariables.yml
+    become: yes
+    become_user: root
+    tasks:
+      - name: Create a login for Kibana.
+        ansible.builtin.command: htpasswd -b -c /{{ volumespath }}/docker/nginx/htpasswd.kibana.users {{ kibana_username }} {{ kibana_password }}
+          
+  # Play8 - Docker-Compose related tasks.
   - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
-    hosts: localhost
+    hosts: servers
     vars_files:
       - config/setupvariables.yml
     become: yes
