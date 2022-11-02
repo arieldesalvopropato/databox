@@ -59,8 +59,11 @@
           src: templates/error.html
           dest: /{{ volumespath }}/docker/nginx/html/error.html
 
-      - name: Copying logo for error page.
-        ansible.builtin.command: cp Databox-logos_black.png /{{ volumespath }}/docker/nginx/html/Databox-logos_black.png
+      - name: 1 - Copying Gifs for error page.
+        ansible.builtin.command: cp theoffice.gif /{{ volumespath }}/docker/nginx/html/theoffice.gif
+      
+      - name: 2 - Copying Gifs for error page.  
+        ansible.builtin.command: cp thisisfine.gif /{{ volumespath }}/docker/nginx/html/thisisfine.gif
 
       - name: Creating file for Dashy configuration.
         template:

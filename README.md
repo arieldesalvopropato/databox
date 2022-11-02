@@ -44,9 +44,9 @@ To deploy the server perform the following steps:
 * Install git
 * Install ansible
 * git clone https://github.com/arieldesalvopropato/databox.git
-* cd databox-main
+* cd databox
 * Change the "setupvariables.yml" file in the config folder with your own preferences.
-* sudo ansible-playbook playbook.yaml
+* ansible-playbook playbook.yaml
 
 ## Authors
 
