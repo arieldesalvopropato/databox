@@ -59,12 +59,6 @@
           src: templates/error.html
           dest: /{{ volumespath }}/docker/nginx/html/error.html
 
-      - name: 1 - Copying Gifs for error page.
-        ansible.builtin.command: cp theoffice.gif /{{ volumespath }}/docker/nginx/html/theoffice.gif
-      
-      - name: 2 - Copying Gifs for error page.  
-        ansible.builtin.command: cp thisisfine.gif /{{ volumespath }}/docker/nginx/html/thisisfine.gif
-
       - name: Creating file for Dashy configuration.
         template:
           src: templates/dashy-config.yml
@@ -104,6 +98,26 @@
         apt:
           name: mkcert
           state: present
+        when: (ansible_facts['distribution'] == "Ubuntu")
+
+      - name: Install of mkcert.
+        apt:
+          name: libnss3-tools
+          state: present
+        when: (ansible_facts['distribution'] == "Debian")
+
+      - name: Install of mkcert.
+        ansible.builtin.get_url:
+         url: https://github.com/FiloSottile/mkcert/releases/download/v1.4.3/mkcert-v1.4.3-linux-amd64
+         dest: /usr/bin/mkcert
+        when: (ansible_facts['distribution'] == "Debian")
+
+      - name: Install of mkcert.
+        file:
+          path: /usr/bin/mkcert
+          state: file
+          mode: 0755
+        when: (ansible_facts['distribution'] == "Debian")
 
       - name: Install of Docker.
         apt:
@@ -114,6 +128,20 @@
         apt:
           name: docker-compose
           state: present
+        when: (ansible_facts['distribution'] == "Ubuntu")
+
+      - name: Install of Docker-Compose.
+        ansible.builtin.get_url:
+         url: https://github.com/docker/compose/releases/download/v2.12.2/docker-compose-linux-x86_64
+         dest: /usr/local/bin/docker-compose
+        when: (ansible_facts['distribution'] == "Debian")
+
+      - name: Install of Docker-Compose.
+        file:
+          path: /usr/local/bin/docker-compose
+          state: file
+          mode: 0755
+        when: (ansible_facts['distribution'] == "Debian")
 
       - name: Install of Rsync
         apt:
@@ -123,11 +151,6 @@
       - name: Install of Curator
         apt:
           name: elasticsearch-curator
-          state: present
-      
-      - name: Install of Apache utils
-        apt:
-          name: apache2-utils
           state: present
 
   # Play3 - Certificates related tasks.
@@ -234,19 +257,8 @@
           minute: "0"
           hour: "1"
           job: curator_cli --host localhost:9200 delete_indices --filter_list {{ curator_filter }}
-
-  # Play7 - Nginx related tasks.
-  - name: Play htpasswd - setup of htpasswd for Nginx.
-    hosts: servers
-    vars_files:
-      - config/setupvariables.yml
-    become: yes
-    become_user: root
-    tasks:
-      - name: Create a login for Kibana.
-        ansible.builtin.command: htpasswd -b -c /{{ volumespath }}/docker/nginx/htpasswd.kibana.users {{ kibana_username }} {{ kibana_password }}
           
-  # Play8 - Docker-Compose related tasks.
+  # Play7 - Docker-Compose related tasks.
   - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
     hosts: servers
     vars_files:
