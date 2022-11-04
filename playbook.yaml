@@ -270,7 +270,7 @@
       - name: Clone Docker Bench Security repo.
         ansible.builtin.git:
           repo: https://github.com/docker/docker-bench-security.git
-          dest: /{{ volumespath }}
+          dest: /{{ volumespath }}/docker-bench-security
 
       - name: Setup task in cron to scan the environment.
         ansible.builtin.cron:
