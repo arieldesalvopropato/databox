@@ -30,6 +30,7 @@
         - dashy
         - samba
         - filebeat
+        - securitylogs
 
       - name: Create a directory for share with Samba (Docker).
         file:
@@ -257,8 +258,29 @@
           minute: "0"
           hour: "1"
           job: curator_cli --host localhost:9200 delete_indices --filter_list {{ curator_filter }}
-          
-  # Play7 - Docker-Compose related tasks.
+
+  # Play7 - Docker Bench for Security related tasks.
+  - name: Play Docker Bench - setup of Docker Bench for Security tasks.
+    hosts: servers
+    vars_files:
+      - config/setupvariables.yml
+    become: yes
+    become_user: root
+    tasks:
+      - name: Clone Docker Bench Security repo.
+        ansible.builtin.git:
+          repo: https://github.com/docker/docker-bench-security.git
+          dest: /{{ volumespath }}
+
+      - name: Setup task in cron to scan the environment.
+        ansible.builtin.cron:
+          name: "Running Docker Bench for Security"
+          day: "1"
+          minute: "0"
+          hour: "1"
+          job: cd {{ volumespath }}/docker-bench-security; sudo sh docker-bench-security.sh -l {{ volumespath }}/docker/securitylogs/security-report
+  
+  # Play8 - Docker-Compose related tasks.
   - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
     hosts: servers
     vars_files:

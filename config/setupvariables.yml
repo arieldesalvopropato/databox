@@ -34,6 +34,7 @@ wireguard_serverurl: #Wireguard VPN server address (Public IP or Dynamic DNS).
 
 #Pi-Hole
 pihole_password: changeMe! #Set a secure password here or it will be random.
+check_load: false #Set the status of the process to check the load. It's recommended keep this in false in low performance environments.
 
 #Samba
 samba_username: changeMe!

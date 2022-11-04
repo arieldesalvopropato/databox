@@ -12,25 +12,25 @@ The requirements of this script for use are not determined on a single particula
 
 ## Containers
 
-* Duplicati
-* Dashy
-* Jellyfin
-* MySQL
-* NextCloud
-* Ngnix
-* Pi-Hole
-* Portainer
-* Transmission
-* Sonarr
-* Jackett
-* Uptime-Kuma
-* Watchtower
-* Kasm
-* Wireguard
-* Samba
-* FileBrowser
-* EKF (Elasticsearch - Kibana - Filebeat)
+* [Duplicati](https://www.duplicati.com/)
+* [Dashy](https://dashy.to/)
+* [Jellyfin](https://jellyfin.org/)
+* [MySQL](https://www.mysql.com/)
+* [NextCloud](https://nextcloud.com/es/)
+* [Ngnix](https://www.nginx.com/)
+* [Pi-Hole](https://pi-hole.net/)
+* [Portainer](https://www.portainer.io/)
+* [Transmission](https://transmissionbt.com/)
+* [Sonarr](https://sonarr.tv/)
+* [Jackett](https://github.com/Jackett/Jackett)
+* [Uptime-Kuma](https://github.com/louislam/uptime-kuma)
+* [Watchtower](https://containrrr.dev/watchtower/)
+* [Kasm](https://www.kasmweb.com/)
+* [Wireguard](https://www.wireguard.com/)
+* [FileBrowser](https://filebrowser.org/)
+* EKF ([Elasticsearch](https://www.elastic.co/) - [Kibana](https://www.elastic.co/kibana/) - [Filebeat](https://www.elastic.co/beats/filebeat))
 * No-IP
+* Samba
 
 ## Usage
 Install a base operating system. For the development of the Scripts and Playbooks I used [Ubuntu Server](https://ubuntu.com/download/server). In case of using an operating system with a package manager different to apt, define it in the playbook yaml file.
