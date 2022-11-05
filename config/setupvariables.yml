@@ -40,15 +40,6 @@ check_load: false #Set the status of the process to check the load. It's recomme
 samba_username: changeMe!
 samba_password: changeMe!
 
-#Kibana
-kibana_username: changeMe!
-kibana_password: changeMe!
-
-#Rsync
-rsync_username: changeMe!
-rsync_group: changeMe!
-rsync_password: changeMe!
-
 #Curator 
 #Only change the time of retention.
 curator_filter: '[{"filtertype": "pattern", "kind": "prefix", "value": "filebeat-"}, {"filtertype": "age", "source": "name", "direction": "older", "timestring": "%Y.%m.%d", "unit": "days","unit_count": 30}]'

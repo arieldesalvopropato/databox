@@ -144,11 +144,6 @@
           mode: 0755
         when: (ansible_facts['distribution'] == "Debian")
 
-      - name: Install of Rsync
-        apt:
-          name: rsync
-          state: present
-
       - name: Install of Curator
         apt:
           name: elasticsearch-curator
@@ -194,57 +189,7 @@
       - name: Restarting the service.
         ansible.builtin.command: systemctl restart cockpit.service
 
-  # Play5 - Rsync related tasks.
-  - name: Play Rsync - Setup of Rsync.
-    hosts: servers
-    vars_files:
-      - config/setupvariables.yml
-    become: yes
-    become_user: root
-    tasks:
-      - name: Copying the service.
-        ansible.builtin.command: cp /lib/systemd/system/rsync.service /etc/systemd/system/rsync.service
-
-      - name: Restarting the service.
-        ansible.builtin.command: systemctl restart rsync
-
-      - name: Creating file for rsync configuration.
-        template:
-          src: templates/rsyncd.conf
-          dest: /etc/rsyncd.conf
-
-      - name: Creating file for rsync secrets.
-        template:
-          src: templates/rsyncd.passwd
-          dest: /etc/rsyncd.passwd
-
-      - name: Change rsync secret file permissions.
-        ansible.builtin.file:
-          path: /etc/rsyncd.passwd
-          mode: 0600
-
-      - name: Restarting the service.
-        ansible.builtin.command: systemctl restart rsync
-
-      - name: "Create backups group"
-        group:
-          name: "{{ rsync_group }}"
-          state: present
-
-      - name: Create a login user for rsync.
-        user:
-          name: "{{ rsync_username }}"
-          password: "{{ rsync_password | password_hash('sha512') }}"
-          groups: "{{ rsync_group }}"
-          comment: "{{ rsync_username }}"
-          state: present
-          expires: "-1"
-          shell: /bin/bash                  # Defaults to /bin/bash
-          system: no                        # Defaults to no
-          createhome: no                    # Defaults to yes
-          home: /home/{{ rsync_username }}  # Defaults to /home/<username>
-
-  # Play6 - Curator related tasks.
+  # Play5 - Curator related tasks.
   - name: Play Curator - setup of curator cron task.
     hosts: servers
     vars_files:
@@ -259,7 +204,7 @@
           hour: "1"
           job: curator_cli --host localhost:9200 delete_indices --filter_list {{ curator_filter }}
 
-  # Play7 - Docker Bench for Security related tasks.
+  # Play6 - Docker Bench for Security related tasks.
   - name: Play Docker Bench - setup of Docker Bench for Security tasks.
     hosts: servers
     vars_files:
@@ -280,7 +225,7 @@
           hour: "1"
           job: cd {{ volumespath }}/docker-bench-security; sudo sh docker-bench-security.sh -l {{ volumespath }}/docker/securitylogs/security-report
   
-  # Play8 - Docker-Compose related tasks.
+  # Play7 - Docker-Compose related tasks.
   - name: Play Docker-Compose - Deploy of docker using Docker-Compose yml file.
     hosts: servers
     vars_files:
