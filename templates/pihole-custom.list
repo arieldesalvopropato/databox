@@ -8,6 +8,8 @@
 {{ hostip }} nextcloud.{{ domain }}
 {{ hostip }} pihole.{{ domain }}
 {{ hostip }} transmission.{{ domain }}
+{{ hostip }} resiliosync.{{ domain }}
+{{ hostip }} syncthing.{{ domain }}
 {{ hostip }} uptimekuma.{{ domain }}
 {{ hostip }} sonarr.{{ domain }}
 {{ hostip }} jackett.{{ domain }}

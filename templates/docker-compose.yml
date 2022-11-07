@@ -6,7 +6,7 @@
 ---
 version: "3.7"
 services:
-############################################################ PORTAINER [OPTIONAL]
+############################################################ PORTAINER
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
@@ -24,7 +24,7 @@ services:
       - {{ domain }}-network
     profiles: ["{{ portainer_status }}"]
       
-############################################################ KASM [OPTIONAL]
+############################################################ KASM
   kasm:
     image: lscr.io/linuxserver/kasm:latest
     container_name: kasm
@@ -76,7 +76,7 @@ services:
       - 4306:3306 #It's reccommended not use the default port
     networks: 
       - {{ domain }}-network
-    profiles: ["{{ nextcloud_status }}"]
+    profiles: ["{{ mysql_status }}"]
 
 ############################################################ JELLYFIN
   jellyfin:
@@ -119,6 +119,45 @@ services:
     networks: 
       - {{ domain }}-network
     profiles: ["{{ pihole_status }}"]
+
+############################################################ SYNCTHING
+  syncthing:
+    image: lscr.io/linuxserver/syncthing:latest
+    container_name: syncthing
+    hostname: {{ domain }} #Optional
+    environment:
+      - TZ= {{ default_tz }}
+    volumes:
+      - /{{ volumespath }}/docker/syncthing/appdata/config:/config
+      - /{{ volumespath }}/docker/syncthing/data1:/data1
+      - /{{ volumespath }}/docker/syncthing/data2:/data2
+    ports:
+      - 8384:8384
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
+    restart: unless-stopped
+    networks: 
+      - {{ domain }}-network
+    profiles: ["{{ syncthing_status }}"]
+
+############################################################ RESILIO-SYNC
+  resilio-sync:
+    image: lscr.io/linuxserver/resilio-sync:latest
+    container_name: resiliosync
+    environment:
+      - TZ= {{ default_tz }}
+    volumes:
+      - /{{ volumespath }}/docker/resiliosync/config:/config
+      - /{{ volumespath }}/docker/resiliosync/downloads:/downloads
+      - /{{ volumespath }}/docker/resiliosync/data:/sync
+    ports:
+      - 8888:8888
+      - 55555:55555
+    restart: unless-stopped
+    networks:
+    - {{ domain }}-network
+    profiles: ["{{ resiliosync_status }}"]
 
 ############################################################ TRANSMISSION
   transmission:
@@ -184,7 +223,7 @@ services:
       - {{ domain }}-network
     profiles: ["{{ uptimekuma_status }}"]
 
-############################################################ WIREGUARD [OPTIONAL]
+############################################################ WIREGUARD
   wireguard:
     image: linuxserver/wireguard
     container_name: wireguard
@@ -261,7 +300,7 @@ services:
       - {{ domain }}-network
     profiles: ["{{ duplicati_status }}"]
 
-############################################################ NO-IP [OPTIONAL]
+############################################################ NO-IP
   no-ip:
     image: uping/no-ip
     container_name: no-ip
@@ -374,7 +413,6 @@ services:
     networks:
       - {{ domain }}-network
     profiles: ["{{ efk_status }}"]
-
 
 ############################################################ VOLUMES
 volumes:

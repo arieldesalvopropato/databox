@@ -73,7 +73,7 @@
       - title: NextCloud
         description: Sync and share files
         icon: nextcloud.png
-        url: https://nextcloud.{{ domain }}
+        url: https://{{ hostip }}.{{ domain }}
         target: newtab
         id: 2_1903_nextcloud
       - title: FileBrowser
@@ -96,12 +96,24 @@
         url: https://duplicati.{{ domain }}
         target: newtab
         id: 0_2232_duplicati
+      - title: Resilio
+        description: Fast, reliable, and simple file sync and share solution, powered by P2P technology
+        icon: resiliosync.png
+        url: https://resiliosync.{{ domain }}
+        target: newtab
+        id: 1_2232_resiliosync
+      - title: Syncthing
+        description: peer-to-peer file synchronization application
+        icon: syncthing.png
+        url: https://syncthing.{{ domain }}
+        target: newtab
+        id: 2_2232_syncthing
       - title: Kasm
         description: Workspaces delivers zero-trust remote browser isolation (RBI)
         icon: kasm.png
         url: https://kasm.{{ domain }}
         target: newtab
-        id: 1_2232_kasm
+        id: 3_2232_kasm
  appConfig:
   theme: dashy-docs
   language: en

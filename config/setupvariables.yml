@@ -55,8 +55,11 @@ efk_status: active
 uptimekuma_status: active
 watchtower_status: active
 nextcloud_status: active
+mysql_status: active
 jellyfin_status: active
 transmission_status: active
+resiliosync_status: disable
+syncthing_status: disable
 sonarr_status: active
 jackett_status: active
 duplicati_status: active
