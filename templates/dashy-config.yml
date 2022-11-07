@@ -73,7 +73,7 @@
       - title: NextCloud
         description: Sync and share files
         icon: nextcloud.png
-        url: https://{{ hostip }}.{{ domain }}
+        url: https://{{ hostip }}:2443 #Using the domain, it's not possible authenticate.
         target: newtab
         id: 2_1903_nextcloud
       - title: FileBrowser
